@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
         difficultyButtons[i] = new QPushButton(difficulties[i], this);
         difficultyButtons[i]->setGeometry(70 * (i + 1), 50, 70, 50);
         difficultyButtons[i]->setStyleSheet("background-color: dimGray;");
-        connect(difficultyButtons[i], &QPushButton::clicked, [this, i]{
+        connect(difficultyButtons[i], &QPushButton::clicked, this, [this, i](){
             game->setDifficulty(i);
             startButton->setEnabled(true);
         });
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     timeLabel->setAlignment(Qt::AlignCenter);
     timeLabel->setStyleSheet("background-color: dimGray;");
 
-    connect(startButton, &QPushButton::clicked, this, [this]
+    connect(startButton, &QPushButton::clicked, this, [this]()
     {
         game->init_board();
         for (int i = 0; i < difficultyButtons.size(); ++i)
@@ -79,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(game, &Game::board_is_ready, this, &MainWindow::handleStart);
+    connect(game, &Game::add_on_grid, this, &MainWindow::addOnGrid);
 }
 
 MainWindow::~MainWindow()
@@ -105,6 +106,21 @@ void MainWindow::handleStart()
             {
                 dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(row, col)->widget())->setText(QString::number(board[row][col]));
             }
+
+            else
+            {
+                dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(row, col)->widget())->setText("");
+            }
         }
     }
+}
+
+void MainWindow::addOnGrid()
+{
+    int x = game->getX();
+    int y = game->getY();
+    dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(x, y)->widget())->setText(QString::number(game->getNumber(x, y)));
+
+    game->setCoords(-1, -1);
+    dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;");
 }

@@ -18,8 +18,26 @@ void Game::init_board()
     emit board_is_ready();
 }
 
+void Game::numberEvent(int number)
+{
+    if (x != -1)
+    {
+        if (full_board[x][y] == number)
+        {
+            board[x][y] = number;
+            //emit add_on_grid();
+        }
+
+        else
+        {
+            // minus heart
+        }
+    }
+}
+
 void Game::init_block(int i, int j)
 {
+    srand(time(NULL));
     int count = 0;
     switch(difficulty)
     {
@@ -73,12 +91,12 @@ void Game::setCoords(int i, int j)
     y = j;
 }
 
-int Game::getX()
+int Game::getX() const
 {
     return x;
 }
 
-int Game::getY()
+int Game::getY() const
 {
     return y;
 }
@@ -88,7 +106,7 @@ bool Game::checkPos(int i, int j) const
     return !board[i][j];
 }
 
-void Game::numberEvent(int number)
+int Game::getNumber(int i, int j) const
 {
-
+    return board[i][j];
 }

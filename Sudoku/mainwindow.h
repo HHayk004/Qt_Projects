@@ -36,5 +36,6 @@ private:
 
 private:
     void handleStart();
+    void addOnGrid();
 };
 #endif // MAINWINDOW_H

@@ -27,15 +27,16 @@ public:
     void init_board();
     void setCoords(int i, int j);
 
-    int getX();
-    int getY();
-
     void numberEvent(int number);
 
+    int getX() const;
+    int getY() const;
+    int getNumber(int i, int j) const;
     bool checkPos(int i, int j) const;
 
 signals:
     void board_is_ready();
+    void add_on_grid();
 
 private:
     void init_block(int i, int j);

@@ -2,7 +2,6 @@
 #include <ctime>
 #include <algorithm>
 #include "SudokuGenerator.h"
-#include <iostream>
 
 QVector<QVector<int>> SudokuGenerator::getGeneratedSudoku()
 {
