@@ -3,10 +3,11 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    ,difficultyButtons(3)
     ,startButton(new QPushButton(this))
     ,timeLabel(new QLabel(this))
-    ,difficultyButtons(3)
-    //, ui(new Ui::MainWindow)
+
+//, ui(new Ui::MainWindow)
 {
     //ui->setupUi(this);
     this->setGeometry(100, 100, 700, 900);
@@ -22,21 +23,21 @@ MainWindow::MainWindow(QWidget *parent)
             button->setStyleSheet("background-color: dimGray;");
 
             connect(button, &QPushButton::clicked, this, [row, col, this]()
-            {
-                int x = game->getX();
-                int y = game->getY();
-
-                if (game->checkPos(row, col))
-                {
-                    game->setCoords(row, col);
-                    if (x != -1)
                     {
-                        dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;");
-                    }
+                        int x = game->getX();
+                        int y = game->getY();
 
-                    dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(row, col)->widget())->setStyleSheet("background-color: blue;");
-                }
-            });
+                        if (game->checkPos(row, col))
+                        {
+                            game->setCoords(row, col);
+                            if (x != -1)
+                            {
+                                dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;");
+                            }
+
+                            dynamic_cast<QPushButton*>(gridLayout->itemAtPosition(row, col)->widget())->setStyleSheet("background-color: blue;");
+                        }
+                    });
 
             gridLayout->addWidget(button, row, col);
         }
@@ -68,15 +69,15 @@ MainWindow::MainWindow(QWidget *parent)
     timeLabel->setStyleSheet("background-color: dimGray;");
 
     connect(startButton, &QPushButton::clicked, this, [this]()
-    {
-        game->init_board();
-        for (int i = 0; i < difficultyButtons.size(); ++i)
-        {
-            difficultyButtons[i]->setEnabled(false);
-        }
+            {
+                game->init_board();
+                for (int i = 0; i < difficultyButtons.size(); ++i)
+                {
+                    difficultyButtons[i]->setEnabled(false);
+                }
 
-        startButton->setEnabled(false);
-    });
+                startButton->setEnabled(false);
+            });
 
     connect(game, &Game::board_is_ready, this, &MainWindow::handleStart);
     connect(game, &Game::add_on_grid, this, &MainWindow::addOnGrid);

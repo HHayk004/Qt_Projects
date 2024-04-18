@@ -25,7 +25,7 @@ void Game::numberEvent(int number)
         if (full_board[x][y] == number)
         {
             board[x][y] = number;
-            //emit add_on_grid();
+            emit add_on_grid();
         }
 
         else
