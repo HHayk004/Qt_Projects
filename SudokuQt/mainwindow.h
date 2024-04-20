@@ -28,14 +28,19 @@ public:
 private:
     //Ui::MainWindow *ui;
     Game* game;
-    QGridLayout* gridLayout;
+    QGridLayout* grid_layout;
 
-    QVector<QPushButton*> difficultyButtons;
-    QPushButton* startButton;
-    QLabel* timeLabel;
+    QVector<QPushButton*> difficulty_buttons;
+    QPushButton* start_button;
+    QPushButton* reset_game;
+    QLabel* heart_label;
+    QLabel* time_label;
 
 private:
     void handleStart();
     void addOnGrid();
+    void changeHeartLabel();
+
+    void resetGame();
 };
 #endif // MAINWINDOW_H

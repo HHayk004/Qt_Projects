@@ -1,14 +1,20 @@
 #include "game.h"
 
 Game::Game(QObject* parent) : board(9, QVector<int>(9, 0))
-    , x(-1)
-    , y(-1)
 {
-    full_board = SudokuGenerator::getGeneratedSudoku();
 }
 
-void Game::init_board()
+void Game::initGame()
 {
+    hearts = 3;
+    full_board = SudokuGenerator::getGeneratedSudoku();
+
+    for (int i = 0; i < board.size(); ++i){
+        for (int j = 0; j < board.size(); ++j){
+            board[i][j] = 0;
+        }
+    }
+
     for (int i = 0; i < 3; ++i){
         for (int j = 0; j < 3; ++j){
             init_block(i * 3, j * 3);
@@ -30,14 +36,14 @@ void Game::numberEvent(int number)
 
         else
         {
-            // minus heart
+            --hearts;
+            emit change_hearts_count();
         }
     }
 }
 
 void Game::init_block(int i, int j)
 {
-    srand(time(NULL));
     int count = 0;
     switch(difficulty)
     {
@@ -101,12 +107,17 @@ int Game::getY() const
     return y;
 }
 
-bool Game::checkPos(int i, int j) const
-{
-    return !board[i][j];
-}
-
 int Game::getNumber(int i, int j) const
 {
     return board[i][j];
+}
+
+int Game::getHearts() const
+{
+    return hearts;
+}
+
+bool Game::checkPos(int i, int j) const
+{
+    return !board[i][j];
 }
