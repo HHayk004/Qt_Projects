@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , reset_game(new QPushButton(this))
     , heart_label(new QLabel(this))
     , time_label(new QLabel(this))
+    , timer(new QTimer(this))
 
 //, ui(new Ui::MainWindow)
 {
@@ -36,9 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
                     game->setCoords(row, col);
                     if (x != -1)
                     {
-                        dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;");
+                        dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;"
+                                                                                                                "font-size: 20px;");
                     }
-                    dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(row, col)->widget())->setStyleSheet("background-color: blue;");
+                    dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(row, col)->widget())->setStyleSheet("background-color: blue;"
+                                                                                                                "font-size: 20px;");
                 }
             });
 
@@ -81,14 +84,17 @@ MainWindow::MainWindow(QWidget *parent)
     reset_game->setGeometry(400, 50, 70, 50);
     reset_game->setStyleSheet("background-color: dimGray;");
 
-    connect(reset_game, &QPushButton::clicked, this, &MainWindow::resetGame);
+    connect(reset_game, &QPushButton::clicked, this, [this](){
+        time_label->setText("00:00:00");
+        resetGame();
+    });
 
     heart_label->setGeometry(500, 50, 70, 50);
     heart_label->setAlignment(Qt::AlignCenter);
     heart_label->setStyleSheet("background-color: dimGray;");
     heart_label->setText("Hearts:");
 
-    time_label->setText("Time");
+    time_label->setText("00:00:00");
     time_label->setGeometry(600, 50, 70, 50);
     time_label->setAlignment(Qt::AlignCenter);
     time_label->setStyleSheet("background-color: dimGray;");
@@ -96,6 +102,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(game, &Game::board_is_ready, this, &MainWindow::handleStart);
     connect(game, &Game::add_on_grid, this, &MainWindow::addOnGrid);
     connect(game, &Game::change_hearts_count, this, &MainWindow::changeHeartLabel);
+
+    timer->setInterval(1000);
+
+    connect(timer, &QTimer::timeout, this, [this]() {
+        ++seconds;
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+        time_label->setText(QString("%1:%2:%3").arg(hours, 2, 10, QLatin1Char('0')).arg(minutes, 2, 10, QLatin1Char('0')).arg(secs, 2, 10, QLatin1Char('0')));
+    });
 }
 
 MainWindow::~MainWindow()
@@ -115,6 +131,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 void MainWindow::handleStart()
 {
     heart_label->setText("Hearts: 3");
+    time_label->setText("00:00:00");
     QVector<QVector<int>> board = game->getBoard();
     const int grid_size = 9;
     for (int row = 0; row < grid_size; ++row) {
@@ -132,6 +149,10 @@ void MainWindow::handleStart()
             dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(row, col)->widget())->setEnabled(true);
         }
     }
+
+    timer->start();
+
+    seconds = 0;
 }
 
 void MainWindow::addOnGrid()
@@ -143,6 +164,11 @@ void MainWindow::addOnGrid()
     game->setCoords(-1, -1);
     dynamic_cast<QPushButton*>(grid_layout->itemAtPosition(x, y)->widget())->setStyleSheet("background-color: dimGray;"
                                                                                             "font-size: 20px;");
+    if (game->getEmptyCount() == 0)
+    {
+        timer->stop();
+        QMessageBox::information(nullptr, "Win", "You won!!!");
+    }
 }
 
 void MainWindow::changeHeartLabel()
@@ -150,6 +176,7 @@ void MainWindow::changeHeartLabel()
     heart_label->setText("Hearts: " + QString::number(game->getHearts()));
     if (game->getHearts() == 0)
     {
+        timer->stop();
         resetGame();
     }
 }
@@ -178,5 +205,7 @@ void MainWindow::resetGame()
         difficulty_buttons[i]->setEnabled(true);
     }
 
+    seconds = 0;
+    timer->stop();
     heart_label->setText("Hearts:");
 }

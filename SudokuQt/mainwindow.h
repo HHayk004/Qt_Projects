@@ -8,6 +8,8 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QMessageBox>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,6 +37,8 @@ private:
     QPushButton* reset_game;
     QLabel* heart_label;
     QLabel* time_label;
+    int seconds;
+    QTimer* timer;
 
 private:
     void handleStart();

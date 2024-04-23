@@ -7,6 +7,9 @@ Game::Game(QObject* parent) : board(9, QVector<int>(9, 0))
 void Game::initGame()
 {
     hearts = 3;
+    empty_fields = 0;
+    x = -1;
+    y = -1;
     full_board = SudokuGenerator::getGeneratedSudoku();
 
     for (int i = 0; i < board.size(); ++i){
@@ -31,6 +34,7 @@ void Game::numberEvent(int number)
         if (full_board[x][y] == number)
         {
             board[x][y] = number;
+            --empty_fields;
             emit add_on_grid();
         }
 
@@ -66,6 +70,8 @@ void Game::init_block(int i, int j)
         count = 1;
     }
     }
+
+    empty_fields += 9 - count;
 
     int index = 0;
     while (index != count)
@@ -115,6 +121,11 @@ int Game::getNumber(int i, int j) const
 int Game::getHearts() const
 {
     return hearts;
+}
+
+int Game::getEmptyCount() const
+{
+    return empty_fields;
 }
 
 bool Game::checkPos(int i, int j) const

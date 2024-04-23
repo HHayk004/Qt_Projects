@@ -18,6 +18,7 @@ private:
     int x;
     int y;
     int hearts;
+    int empty_fields;
 
 public:
     Game(QObject* parent);
@@ -34,6 +35,7 @@ public:
     int getY() const;
     int getNumber(int i, int j) const;
     int getHearts() const;
+    int getEmptyCount() const;
     bool checkPos(int i, int j) const;
 
 signals:
